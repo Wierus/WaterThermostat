@@ -1,0 +1,78 @@
+/** SevenSegmentDisplay.c
+ * v.1.0
+ */
+
+#include "SevenSegmentDisplay.h"
+#include "Math.h"
+
+unsigned char GetIndicatorDigit(unsigned char digit) {
+    switch (digit) {
+        case 0: {
+            return SymbolDigit0;
+        }
+        case 1: {
+            return SymbolDigit1;
+        }
+        case 2: {
+            return SymbolDigit2;
+        }
+        case 3: {
+            return SymbolDigit3;
+        }
+        case 4: {
+            return SymbolDigit4;
+        }
+        case 5: {
+            return SymbolDigit5;
+        }
+        case 6: {
+            return SymbolDigit6;
+        }
+        case 7: {
+            return SymbolDigit7;
+        }
+        case 8: {
+            return SymbolDigit8;
+        }
+        case 9: {
+            return SymbolDigit9;
+        }
+        default: {
+            return SymbolNull;
+        }
+    }
+}
+
+void FillIndicators3WithSymbolNull(unsigned char* indicatorValues) {
+    indicatorValues[0] = SymbolNull;
+    indicatorValues[1] = SymbolNull;
+    indicatorValues[2] = SymbolNull;
+}
+
+void FillIndicators3WithSymbolLine(unsigned char* indicatorValues) {
+    indicatorValues[0] = SymbolLine;
+    indicatorValues[1] = SymbolLine;
+    indicatorValues[2] = SymbolLine;
+}
+
+void FillIndicators3WithNumber(unsigned char* indicatorValues, unsigned char sign, unsigned char number) {
+    if (number >= 100) {
+        // [100; 128]
+        // Формат: d2 d1 d0
+        indicatorValues[0] = GetIndicatorDigit(GetD2OfU08(number));
+        indicatorValues[1] = GetIndicatorDigit(GetD1OfU08(number));
+    }
+    else if (number >= 10) {
+        // [-99; -10] и [10; 100)
+        // Формат: s d1 d0
+        indicatorValues[0] = sign ? SymbolLine : SymbolNull;
+        indicatorValues[1] = GetIndicatorDigit(GetD1OfU08(number));
+    }
+    else {
+        // (-10; 0) и [0; 10)
+        // Формат: _ s d0
+        indicatorValues[0] = SymbolNull;
+        indicatorValues[1] = sign ? SymbolLine : SymbolNull;
+    }
+    indicatorValues[2] = GetIndicatorDigit(GetD0OfU08(number));
+}
