@@ -79,9 +79,9 @@ typedef enum EncoderStates {
  */
 EncoderStates encoderState = EncoderLeft0Right0State;
 
-/** Необходимое время удержания кнопки энкодера для совершения действия (в единицах T_INT).
+/** Необходимое время удержания кнопки энкодера для совершения действия (в единицах T_INT, параметр - в секундах).
  */
-#define EncoderButtonPressedTime (TTimer)(0.1 / T_INT) // 0.1 с
+#define EncoderButtonPressedTime GetTaskManagerTimerTime(0.1)
 
 /** Текущее время удержания кнопки энкодера (в единицах T_INT).
  */
@@ -91,9 +91,9 @@ unsigned char encoderButtonTimer = 0;
  */
 bit wasEncoderButtonPressed;
 
-/** Время, прошедшее с момента предыдущего изменения значения энкодера, по истечению которого сбрасывается счетчик щелчков энкодера для выполнения действия (в единицах INT).
+/** Время, прошедшее с момента предыдущего изменения значения энкодера, по истечению которого сбрасывается счетчик щелчков энкодера для выполнения действия (в единицах T_INT, параметр - в секундах).
  */
-#define EncoderValueChangeTimeout (TTimer)(0.5 / T_INT) // 0.5 с
+#define EncoderValueChangeTimeout GetTaskManagerTimerTime(0.5)
 
 /** Текущее время, прошедшее с момента предыдущего изменения значения энкодера (в единицах T_INT).
  */
@@ -127,21 +127,21 @@ signed char encoderValueChanges = 0;
  */
 unsigned char desiredTemperature = DefaultDesiredTemperature;
 
-/** Время бездействия, по истечению которого происходит возврат в режим отображения температуры (в единицах T_INT).
+/** Время бездействия, по истечению которого происходит возврат в режим отображения температуры (в единицах T_INT, параметр - в секундах).
  */
-#define InactivityShowTemperatureModeTimeout (TTimer)(5.0 / T_INT) // 5.0 с
+#define InactivityShowTemperatureModeTimeout GetTaskManagerTimerTime(5.0)
 
 /** Текущее время бездействия в режиме, отличном от режима отображения температуры (в единицах T_INT).
  */
 unsigned char inactivityShowTemperatureModeTimer = 0;
 
-/** Время отображения значения температуры в режиме установки (при мигании) (в единицах T_INT).
+/** Время отображения значения температуры в режиме установки (при мигании) (в единицах T_INT, параметр - в секундах).
  */
-#define SetTemperatureModeShowTime (TTimer)(0.7 / T_INT) // 0.7 с
+#define SetTemperatureModeShowTime GetTaskManagerTimerTime(0.7)
 
-/** Время скрытия значения температуры в режиме установки (при мигании) (в единицах T_INT).
+/** Время скрытия значения температуры в режиме установки (при мигании) (в единицах T_INT, параметр - в секундах).
  */
-#define SetTemperatureModeHideTime (TTimer)(0.3 / T_INT) // 0.3 с
+#define SetTemperatureModeHideTime GetTaskManagerTimerTime(0.3)
 
 /** Текущее время отображения или скрытия значения температуры в режиме установки (в единицах T_INT).
  */
@@ -151,49 +151,49 @@ unsigned char setTemperatureModeBlinkTimer = 0;
  */
 bit isSetTemperatureModeShow;
 
-/** Задержка до выполнения задачи DrawIndicatorsTask (в единицах T_INT).
+/** Задержка до выполнения задачи DrawIndicatorsTask (в единицах T_INT, параметр - в секундах).
  */
-#define DrawIndicatorsTaskDelay                       (TTimer)(0.0 / T_INT) // 0.0 с
+#define DrawIndicatorsTaskDelay                       GetTaskManagerTimerTime(0.0)
 
-/** Задержка до выполнения задачи ScanEncoderTask (в единицах T_INT).
+/** Задержка до выполнения задачи ScanEncoderTask (в единицах T_INT, параметр - в секундах).
  */
-#define ScanEncoderTaskDelay                          (TTimer)(0.0 / T_INT) // 0.0 с
+#define ScanEncoderTaskDelay                          GetTaskManagerTimerTime(0.0)
 
-/** Задержка до выполнения задачи ScanEncoderButtonTask (в единицах T_INT).
+/** Задержка до выполнения задачи ScanEncoderButtonTask (в единицах T_INT, параметр - в секундах).
  */
-#define ScanEncoderButtonTaskDelay                    (TTimer)(0.0 / T_INT) // 0.0 с
+#define ScanEncoderButtonTaskDelay                    GetTaskManagerTimerTime(0.0)
 
-/** Задержка до выполнения задачи FillIndicatorsWithCurrentTemperatureTask (в единицах T_INT).
+/** Задержка до выполнения задачи FillIndicatorsWithCurrentTemperatureTask (в единицах T_INT, параметр - в секундах).
  */
-#define FillIndicatorsWithCurrentTemperatureTaskDelay (TTimer)(0.0 / T_INT) // 0.0 с
+#define FillIndicatorsWithCurrentTemperatureTaskDelay GetTaskManagerTimerTime(0.0)
 
-/** Задержка до выполнения задачи FillIndicatorsWithDesiredTemperatureTask (в единицах T_INT).
+/** Задержка до выполнения задачи FillIndicatorsWithDesiredTemperatureTask (в единицах T_INT, параметр - в секундах).
  */
-#define FillIndicatorsWithDesiredTemperatureTaskDelay (TTimer)(0.0 / T_INT) // 0.0 с
+#define FillIndicatorsWithDesiredTemperatureTaskDelay GetTaskManagerTimerTime(0.0)
 
-/** Задержка до выполнения задачи ProcessWaterRelayTask (в единицах T_INT).
+/** Задержка до выполнения задачи ProcessWaterRelayTask (в единицах T_INT, параметр - в секундах).
  */
-#define ProcessWaterRelayTaskDelay                    (TTimer)(0.0 / T_INT) // 0.0 с
+#define ProcessWaterRelayTaskDelay                    GetTaskManagerTimerTime(0.0)
 
-/** Задержка до выполнения задачи ProcessHeaterRelayTask (в единицах T_INT).
+/** Задержка до выполнения задачи ProcessHeaterRelayTask (в единицах T_INT, параметр - в секундах).
  */
-#define ProcessHeaterRelayTaskDelay                   (TTimer)(0.0 / T_INT) // 0.0 с
+#define ProcessHeaterRelayTaskDelay                   GetTaskManagerTimerTime(0.0)
 
-/** Задержка до выполнения задачи FillIndicatorsTask (в единицах T_INT).
+/** Задержка до выполнения задачи FillIndicatorsTask (в единицах T_INT, параметр - в секундах).
  */
-#define FillIndicatorsTaskDelay                       (TTimer)(0.0 / T_INT) // 0.0 с
+#define FillIndicatorsTaskDelay                       GetTaskManagerTimerTime(0.0)
 
-/** Задержка до выполнения задачи RefreshDS18B20Task (в единицах T_INT).
+/** Задержка до выполнения задачи RefreshDS18B20Task (в единицах T_INT, параметр - в секундах).
  */
-#define RefreshDS18B20TaskDelay                       (TTimer)(5.0 / T_INT) // 5.0 с
+#define RefreshDS18B20TaskDelay                       GetTaskManagerTimerTime(5.0)
 
-/** Задержка до выполнения задачи ConvertTemperatureTask (в единицах T_INT).
+/** Задержка до выполнения задачи ConvertTemperatureTask (в единицах T_INT, параметр - в секундах).
  */
-#define ConvertTemperatureTaskDelay                   (TTimer)(0.0 / T_INT) // 0.0 с
+#define ConvertTemperatureTaskDelay                   GetTaskManagerTimerTime(0.0)
 
-/** Задержка до выполнения задачи GetTemperatureTask (в единицах T_INT).
+/** Задержка до выполнения задачи GetTemperatureTask (в единицах T_INT, параметр - в секундах).
  */
-#define GetTemperatureTaskDelay                       (TTimer)(1.0 / T_INT) // 1.0 с
+#define GetTemperatureTaskDelay                       GetTaskManagerTimerTime(1.0)
 
 /** Режимы работы.
  */

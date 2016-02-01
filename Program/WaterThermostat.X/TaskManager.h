@@ -1,5 +1,5 @@
 /** TaskManager.h
- * v.1.1
+ * v.1.2
  */
 
 #ifndef TASKMANAGER_H
@@ -19,6 +19,12 @@
 typedef void (*TPtr)(void);
 
 typedef TaskManagerTimerType TTimer;
+
+/** Преобразовывает время в секундах во время в единицах T_INT для установки таймера на задачу.
+ * @param timeS Время в секундах (поддерживаются дробные значения секунд).
+ * @return Время в единицах T_INT для установки таймера на задачу.
+ */
+#define GetTaskManagerTimerTime(timeS) ((TTimer)((timeS) / T_INT))
 
 TPtr TasksQueue[TaskManagerQueueSize];
 
