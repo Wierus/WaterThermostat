@@ -536,16 +536,19 @@ void ProcessWaterRelayAction() {
 void ProcessHeaterRelayAction() {
     // если датчик нижнего уровня в воде
     if (LowLevelSensorPin == LevelSensorActive) {
-        if (DS18B20TemperatureValue.integerPart <= (desiredTemperature - TemperatureHysteresis)) {
-            // если не идет налив
-            if (WaterRelayPin == RelayOff) {
-                // включить нагрев
-                HeaterRelayPin = RelayOn;
+        // если корректное значение температуры уже было получено
+        if (DS18B20TemperatureValueIsCorrect) {
+            if (DS18B20TemperatureValue.integerPart <= (desiredTemperature - TemperatureHysteresis)) {
+                // если не идет налив
+                if (WaterRelayPin == RelayOff) {
+                    // включить нагрев
+                    HeaterRelayPin = RelayOn;
+                }
             }
-        }
-        if (DS18B20TemperatureValue.integerPart >= (desiredTemperature + TemperatureHysteresis)) {
-            // выключить нагрев
-            HeaterRelayPin = RelayOff;
+            if (DS18B20TemperatureValue.integerPart >= (desiredTemperature + TemperatureHysteresis)) {
+                // выключить нагрев
+                HeaterRelayPin = RelayOff;
+            }
         }
     }
     // если датчик нижнего уровня без воды
