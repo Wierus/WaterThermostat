@@ -1,5 +1,5 @@
 /** DS18B20.h
- * v.1.0
+ * v.1.1
  */
 
 #ifndef DS18B20_H
@@ -171,9 +171,9 @@ DS18B20ErrorCodes DS18B20ResultConvertTemperature = DS18B20PrecencePulseNotDetec
  */
 DS18B20ErrorCodes DS18B20ResultGetTemperature = DS18B20PrecencePulseNotDetected;
 
-/** Флаг, показывающий, отображать ли предыдущее значение температуры с датчика DS18B20 при ошибочном чтении.
+/** Флаг, показывающий, что корректное значение температуры уже было получено и сохранено в переменной DS18B20TemperatureValue, которую можно использовать.
  */
-bit DS18B20ShowValueIfReadError = 0;
+bit DS18B20TemperatureValueIsCorrect = 0;
 
 /** Отправляет датчику команду "Convert T" для запуска процесса измерения и преобразования температуры.
  * @return DS18B20OperationOK, если команда отправлена успешно.

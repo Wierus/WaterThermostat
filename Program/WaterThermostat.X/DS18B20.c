@@ -1,5 +1,5 @@
 /** DS18B20.c
- * v.1.0
+ * v.1.1
  */
 
 #include "DS18B20.h"
@@ -76,7 +76,7 @@ void DS18B20SetResolution(DS18B20ThermometerResolutions resolution) {
 void DS18B20ConvertTemperature() {
     DS18B20ResultConvertTemperature = DS18B20SendConvertTemperature();
     if (DS18B20ResultConvertTemperature == DS18B20PrecencePulseNotDetected) {
-        DS18B20ShowValueIfReadError = 0;
+        DS18B20TemperatureValueIsCorrect = 0;
     }
 }
 
@@ -84,10 +84,10 @@ void DS18B20GetTemperature() {
     if (DS18B20ResultConvertTemperature == DS18B20OperationOK) {
         DS18B20ResultGetTemperature = DS18B20SendGetTemperature();
         if (DS18B20ResultGetTemperature == DS18B20OperationOK) {
-            DS18B20ShowValueIfReadError = 1;
+            DS18B20TemperatureValueIsCorrect = 1;
         }
         else if (DS18B20ResultGetTemperature == DS18B20PrecencePulseNotDetected) {
-            DS18B20ShowValueIfReadError = 0;
+            DS18B20TemperatureValueIsCorrect = 0;
         }
     }
     else {

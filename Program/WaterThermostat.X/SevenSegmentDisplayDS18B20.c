@@ -1,5 +1,5 @@
 /** SevenSegmentDisplayDS18B20.c
- * v.1.0
+ * v.1.1
  */
 
 #include "SevenSegmentDisplayDS18B20.h"
@@ -11,7 +11,7 @@ void FillIndicators3WithDS18B20Temperature(unsigned char* indicatorValues) {
         FillIndicators3WithSymbolLine(indicatorValues);
     }
     else {
-        if (DS18B20ShowValueIfReadError) {
+        if (DS18B20TemperatureValueIsCorrect) {
             FillIndicators3WithNumber(indicatorValues, DS18B20TemperatureValue.sign, DS18B20TemperatureValue.integerPart);
         }
         else {
