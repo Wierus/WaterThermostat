@@ -155,13 +155,9 @@ bit isSetTemperatureModeShow;
  */
 #define DrawIndicatorsTaskDelay                       GetTaskManagerTimerTime(0.0)
 
-/** Задержка до выполнения задачи ScanEncoderTask (в единицах T_INT, параметр - в секундах).
+/** Задержка до выполнения задачи FillIndicatorsTask (в единицах T_INT, параметр - в секундах).
  */
-#define ScanEncoderTaskDelay                          GetTaskManagerTimerTime(0.0)
-
-/** Задержка до выполнения задачи ScanEncoderButtonTask (в единицах T_INT, параметр - в секундах).
- */
-#define ScanEncoderButtonTaskDelay                    GetTaskManagerTimerTime(0.0)
+#define FillIndicatorsTaskDelay                       GetTaskManagerTimerTime(0.0)
 
 /** Задержка до выполнения задачи FillIndicatorsWithCurrentTemperatureTask (в единицах T_INT, параметр - в секундах).
  */
@@ -171,6 +167,14 @@ bit isSetTemperatureModeShow;
  */
 #define FillIndicatorsWithDesiredTemperatureTaskDelay GetTaskManagerTimerTime(0.0)
 
+/** Задержка до выполнения задачи ScanEncoderTask (в единицах T_INT, параметр - в секундах).
+ */
+#define ScanEncoderTaskDelay                          GetTaskManagerTimerTime(0.0)
+
+/** Задержка до выполнения задачи ScanEncoderButtonTask (в единицах T_INT, параметр - в секундах).
+ */
+#define ScanEncoderButtonTaskDelay                    GetTaskManagerTimerTime(0.0)
+
 /** Задержка до выполнения задачи ProcessWaterRelayTask (в единицах T_INT, параметр - в секундах).
  */
 #define ProcessWaterRelayTaskDelay                    GetTaskManagerTimerTime(0.0)
@@ -178,10 +182,6 @@ bit isSetTemperatureModeShow;
 /** Задержка до выполнения задачи ProcessHeaterRelayTask (в единицах T_INT, параметр - в секундах).
  */
 #define ProcessHeaterRelayTaskDelay                   GetTaskManagerTimerTime(0.0)
-
-/** Задержка до выполнения задачи FillIndicatorsTask (в единицах T_INT, параметр - в секундах).
- */
-#define FillIndicatorsTaskDelay                       GetTaskManagerTimerTime(0.0)
 
 /** Задержка до выполнения задачи RefreshDS18B20Task (в единицах T_INT, параметр - в секундах).
  */
@@ -243,6 +243,15 @@ void ProcessOutputTimersInInterrupt() {
 void DrawIndicatorsTask();
 void DrawIndicatorsAction();
 
+void FillIndicatorsTask();
+void FillIndicatorsAction();
+
+void FillIndicatorsWithCurrentTemperatureTask();
+void FillIndicatorsWithCurrentTemperatureAction();
+
+void FillIndicatorsWithDesiredTemperatureTask();
+void FillIndicatorsWithDesiredTemperatureAction();
+
 void ScanEncoderTask();
 void ScanEncoderAction();
 
@@ -264,20 +273,34 @@ void ConvertTemperatureAction();
 void GetTemperatureTask();
 void GetTemperatureAction();
 
-void FillIndicatorsWithCurrentTemperatureTask();
-void FillIndicatorsWithCurrentTemperatureAction();
-
-void FillIndicatorsWithDesiredTemperatureTask();
-void FillIndicatorsWithDesiredTemperatureAction();
-
-void FillIndicatorsTask();
-void FillIndicatorsAction();
-
 // Определение задач
 
 void DrawIndicatorsTask() {
     DrawIndicatorsAction();
     AddTask(DrawIndicatorsTask, DrawIndicatorsTaskDelay);
+}
+
+void FillIndicatorsTask() {
+    FillIndicatorsAction();
+    switch (workMode) {
+        case ShowTemperatureMode: {
+            AddTask(FillIndicatorsWithCurrentTemperatureTask, FillIndicatorsWithCurrentTemperatureTaskDelay);
+            break;
+        }
+        case SetTemperatureMode: {
+            AddTask(FillIndicatorsWithDesiredTemperatureTask, FillIndicatorsWithDesiredTemperatureTaskDelay);
+            break;
+        }
+    }
+    AddTask(FillIndicatorsTask, FillIndicatorsTaskDelay);
+}
+
+void FillIndicatorsWithCurrentTemperatureTask() {
+    FillIndicatorsWithCurrentTemperatureAction();
+}
+
+void FillIndicatorsWithDesiredTemperatureTask() {
+    FillIndicatorsWithDesiredTemperatureAction();
 }
 
 void ScanEncoderTask() {
@@ -315,29 +338,6 @@ void GetTemperatureTask() {
     GetTemperatureAction();
 }
 
-void FillIndicatorsWithCurrentTemperatureTask() {
-    FillIndicatorsWithCurrentTemperatureAction();
-}
-
-void FillIndicatorsWithDesiredTemperatureTask() {
-    FillIndicatorsWithDesiredTemperatureAction();
-}
-
-void FillIndicatorsTask() {
-    FillIndicatorsAction();
-    switch (workMode) {
-        case ShowTemperatureMode: {
-            AddTask(FillIndicatorsWithCurrentTemperatureTask, FillIndicatorsWithCurrentTemperatureTaskDelay);
-            break;
-        }
-        case SetTemperatureMode: {
-            AddTask(FillIndicatorsWithDesiredTemperatureTask, FillIndicatorsWithDesiredTemperatureTaskDelay);
-            break;
-        }
-    }
-    AddTask(FillIndicatorsTask, FillIndicatorsTaskDelay);
-}
-
 // Определение действий для задач
 
 void DrawIndicatorsAction() {
@@ -353,6 +353,35 @@ void DrawIndicatorsAction() {
     Indicator2Pin = IndicatorOn;
     __delay_ms(IndicatorLightingTime);
     Indicator2Pin = IndicatorOff;
+}
+
+void FillIndicatorsAction() {
+    if (workMode != ShowTemperatureMode) {
+        if (inactivityShowTemperatureModeTimer >= InactivityShowTemperatureModeTimeout) {
+            workMode = ShowTemperatureMode;
+        }
+    }
+}
+
+void FillIndicatorsWithCurrentTemperatureAction() {
+    FillIndicators3WithDS18B20Temperature(indicatorValues);
+}
+
+void FillIndicatorsWithDesiredTemperatureAction() {
+    if (isSetTemperatureModeShow) {
+        FillIndicators3WithNumber(indicatorValues, 0, desiredTemperature);
+        if (setTemperatureModeBlinkTimer >= SetTemperatureModeShowTime) {
+            setTemperatureModeBlinkTimer = 0;
+            isSetTemperatureModeShow = 0;
+        }
+    }
+    else {
+        FillIndicators3WithSymbolNull(indicatorValues);
+        if (setTemperatureModeBlinkTimer >= SetTemperatureModeHideTime) {
+            setTemperatureModeBlinkTimer = 0;
+            isSetTemperatureModeShow = 1;
+        }
+    }
 }
 
 void ScanEncoderAction() {
@@ -535,35 +564,6 @@ void ConvertTemperatureAction() {
 
 void GetTemperatureAction() {
     DS18B20GetTemperature();
-}
-
-void FillIndicatorsWithCurrentTemperatureAction() {
-    FillIndicators3WithDS18B20Temperature(indicatorValues);
-}
-
-void FillIndicatorsWithDesiredTemperatureAction() {
-    if (isSetTemperatureModeShow) {
-        FillIndicators3WithNumber(indicatorValues, 0, desiredTemperature);
-        if (setTemperatureModeBlinkTimer >= SetTemperatureModeShowTime) {
-            setTemperatureModeBlinkTimer = 0;
-            isSetTemperatureModeShow = 0;
-        }
-    }
-    else {
-        FillIndicators3WithSymbolNull(indicatorValues);
-        if (setTemperatureModeBlinkTimer >= SetTemperatureModeHideTime) {
-            setTemperatureModeBlinkTimer = 0;
-            isSetTemperatureModeShow = 1;
-        }
-    }
-}
-
-void FillIndicatorsAction() {
-    if (workMode != ShowTemperatureMode) {
-        if (inactivityShowTemperatureModeTimer >= InactivityShowTemperatureModeTimeout) {
-            workMode = ShowTemperatureMode;
-        }
-    }
 }
 
 void InitOptionReg() {
