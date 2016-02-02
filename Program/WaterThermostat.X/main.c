@@ -550,6 +550,11 @@ void ProcessHeaterRelayAction() {
                 HeaterRelayPin = RelayOff;
             }
         }
+        // если значение температуры еще не было получено или датчик температуры отключен
+        else {
+            // выключить нагрев
+            HeaterRelayPin = RelayOff;
+        }
     }
     // если датчик нижнего уровня без воды
     else {
