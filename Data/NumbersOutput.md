@@ -1,4 +1,4 @@
-### Вывод чисел в диапазоне от -55 до 125 с шагом 1 для 3-х семисегментных индикаторов
+### Вывод чисел в диапазоне от -99 до 255 с шагом 1 на 3 семисегментных индикаторов
 
 <table>
   <tr>
@@ -12,9 +12,9 @@
   </tr>
   <tr>
     <td align="center">-</td>
-    <td align="center">5</td>
-    <td align="center">5</td>
-    <td align="center" rowspan="3">(-inf; -10]</td>
+    <td align="center">9</td>
+    <td align="center">9</td>
+    <td align="center" rowspan="3">[-99; -10]</td>
     <td align="center" rowspan="3">s</td>
     <td align="center" rowspan="3">d1</td>
     <td align="center" rowspan="3">d0</td>
@@ -82,7 +82,7 @@
     <td align="center">1</td>
     <td align="center">0</td>
     <td align="center">0</td>
-    <td align="center" rowspan="3">[100; +inf)</td>
+    <td align="center" rowspan="3">[100; 255]</td>
     <td align="center" rowspan="3">d2</td>
     <td align="center" rowspan="3">d1</td>
     <td align="center" rowspan="3">d0</td>
@@ -91,8 +91,8 @@
     <td align="center" colspan="3">...</td>
   </tr>
   <tr>
-    <td align="center">1</td>
     <td align="center">2</td>
+    <td align="center">5</td>
     <td align="center">5</td>
   </tr>
 </table>
