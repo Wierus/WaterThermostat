@@ -17,7 +17,7 @@
 #define Indicator2Pin          RC0
 #define Indicator2PinDirection TRISC0
 
-// Выводы сегментов индикатора
+// Маски сегментов индикатора
 #define SevenSegmentDisplaySAMask 0b00100000
 #define SevenSegmentDisplaySBMask 0b01000000
 #define SevenSegmentDisplaySCMask 0b00000010

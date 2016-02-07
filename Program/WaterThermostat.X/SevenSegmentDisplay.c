@@ -1,5 +1,5 @@
 /** SevenSegmentDisplay.c
- * v.1.0
+ * v.1.1
  */
 
 #include "SevenSegmentDisplay.h"
@@ -57,7 +57,7 @@ void FillIndicators3WithSymbolLine(unsigned char* indicatorValues) {
 
 void FillIndicators3WithNumber(unsigned char* indicatorValues, unsigned char sign, unsigned char number) {
     if (number >= 100) {
-        // [100; 128]
+        // [100; 255]
         // Формат: d2 d1 d0
         indicatorValues[0] = GetIndicatorDigit(GetD2OfU08(number));
         indicatorValues[1] = GetIndicatorDigit(GetD1OfU08(number));
@@ -75,4 +75,31 @@ void FillIndicators3WithNumber(unsigned char* indicatorValues, unsigned char sig
         indicatorValues[1] = sign ? SymbolLine : SymbolNull;
     }
     indicatorValues[2] = GetIndicatorDigit(GetD0OfU08(number));
+}
+
+void FillIndicators3AndSignWithNumber(unsigned char* indicatorValues, unsigned char* indicatorSign, unsigned char sign, unsigned char number, unsigned char fractionalPart) {
+    if (number >= 100) {
+        // [100; 255]
+        // Формат: s d2 d1 d0
+        *indicatorSign = 0;
+        indicatorValues[0] = GetIndicatorDigit(GetD2OfU08(number));
+        indicatorValues[1] = GetIndicatorDigit(GetD1OfU08(number));
+        indicatorValues[2] = GetIndicatorDigit(GetD0OfU08(number));
+    }
+    else if (number >= 10) {
+        // (-100; -10] и [10; 100)
+        // Формат: s d1 d0. f0
+        *indicatorSign = sign;
+        indicatorValues[0] = GetIndicatorDigit(GetD1OfU08(number));
+        indicatorValues[1] = GetIndicatorDigit(GetD0OfU08(number)) | SymbolDot;
+        indicatorValues[2] = GetIndicatorDigit(GetD0OfU08(fractionalPart));
+    }
+    else {
+        // (-10; 0) и [0; 10)
+        // Формат: _ s d0. f0
+        *indicatorSign = 0;
+        indicatorValues[0] = sign ? SymbolLine : SymbolNull;
+        indicatorValues[1] = GetIndicatorDigit(GetD0OfU08(number)) | SymbolDot;
+        indicatorValues[2] = GetIndicatorDigit(GetD0OfU08(fractionalPart));
+    }
 }

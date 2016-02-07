@@ -1,5 +1,5 @@
 /** SevenSegmentDisplay.h
- * v.1.0
+ * v.1.1
  */
 
 #ifndef SEVENSEGMENTDISPLAY_H
@@ -140,5 +140,14 @@ void FillIndicators3WithSymbolLine(unsigned char* indicatorValues);
  * @param number Модуль выводимого числа в диапазоне от 0 до 255.
  */
 void FillIndicators3WithNumber(unsigned char* indicatorValues, unsigned char sign, unsigned char number);
+
+/** Выводит число в диапазоне от -99.9 до 99.9 с шагом 0.1 или в диапазоне от 100 до 255 с шагом 1 на индикатор символа "минус" и три семисегментных индикатора.
+ * @param indicatorValues Массив, в который будут выведены символы. Массив должен иметь длину равную трем.
+ * @param indicatorSign Указатель на переменную, в которую будет записано состояние индикатора символа "минус" (включен или выключен).
+ * @param sign Отрицательный знак числа. 0 - положительное значение или ноль, 1 - отрицательное значение.
+ * @param number Модуль выводимого числа в диапазоне от 0 до 255 (целая часть).
+ * @param fractionalPart Дробная часть выводимого числа от 0 до 9.
+ */
+void FillIndicators3AndSignWithNumber(unsigned char* indicatorValues, unsigned char* indicatorSign, unsigned char sign, unsigned char number, unsigned char fractionalPart);
 
 #endif /* SEVENSEGMENTDISPLAY_H */

@@ -92,7 +92,7 @@
 
 /** Длина очереди задач для диспетчера.
  */
-#define TaskManagerQueueSize 9
+#define TaskManagerQueueSize 8
 
 /** Тип таймера задач для диспетчера.
  */

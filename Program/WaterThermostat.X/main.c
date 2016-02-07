@@ -1,6 +1,7 @@
 #include "Config.h"
 #include "Delay.h"
 #include "DS18B20.h"
+#include "DS18B20Tasks.h"
 #include "Math.h"
 #include "Pins.h"
 #include "SevenSegmentDisplay.h"
@@ -183,18 +184,6 @@ bit isSetTemperatureModeShow;
  */
 #define ProcessHeaterRelayTaskDelay                   GetTaskManagerTimerTime(0.0)
 
-/** Задержка до выполнения задачи RefreshDS18B20Task (в единицах T_INT, параметр - в секундах).
- */
-#define RefreshDS18B20TaskDelay                       GetTaskManagerTimerTime(5.0)
-
-/** Задержка до выполнения задачи ConvertTemperatureTask (в единицах T_INT, параметр - в секундах).
- */
-#define ConvertTemperatureTaskDelay                   GetTaskManagerTimerTime(0.0)
-
-/** Задержка до выполнения задачи GetTemperatureTask (в единицах T_INT, параметр - в секундах).
- */
-#define GetTemperatureTaskDelay                       GetTaskManagerTimerTime(1.0)
-
 /** Режимы работы.
  */
 typedef enum WorkMode {
@@ -267,12 +256,6 @@ void ProcessHeaterRelayAction();
 void RefreshDS18B20Task();
 void RefreshDS18B20Action();
 
-void ConvertTemperatureTask();
-void ConvertTemperatureAction();
-
-void GetTemperatureTask();
-void GetTemperatureAction();
-
 // Определение задач
 
 void DrawIndicatorsTask() {
@@ -325,17 +308,7 @@ void ProcessHeaterRelayTask() {
 
 void RefreshDS18B20Task() {
     RefreshDS18B20Action();
-    AddTask(RefreshDS18B20Task, RefreshDS18B20TaskDelay);
-    AddTask(ConvertTemperatureTask, ConvertTemperatureTaskDelay);
-}
-
-void ConvertTemperatureTask() {
-    ConvertTemperatureAction();
-    AddTask(GetTemperatureTask, GetTemperatureTaskDelay);
-}
-
-void GetTemperatureTask() {
-    GetTemperatureAction();
+    AddTask(DS18B20InitializeSensorTask, DS18B20InitializeSensorTaskDelay);
 }
 
 // Определение действий для задач
@@ -566,12 +539,20 @@ void ProcessHeaterRelayAction() {
 void RefreshDS18B20Action() {
 }
 
-void ConvertTemperatureAction() {
-    DS18B20ConvertTemperature();
-}
+void InitOptionReg();
+void InitIntConReg();
+void InitOscConReg();
+void InitAnSelReg();
+void InitCmCon0Reg();
+void InitADCon0Reg();
 
-void GetTemperatureAction() {
-    DS18B20GetTemperature();
+void InitRegisters() {
+    InitOptionReg();
+    InitIntConReg();
+    InitOscConReg();
+    InitAnSelReg();
+    InitCmCon0Reg();
+    InitADCon0Reg();
 }
 
 void InitOptionReg() {
@@ -620,7 +601,7 @@ void InitOptionReg() {
     OPTION_REGbits.nRAPU = 1;
 }
 
-void InitIntConReg(void) {
+void InitIntConReg() {
     /** INTCON: bit 0
      * RAIF: PORTA Change Interrupt Flag bit
      * 1 = When at least one of the PORTA <5:0> pins changed state (must be cleared in software)
@@ -811,15 +792,6 @@ void InitADCon0Reg() {
      */
 }
 
-void InitRegisters() {
-    InitOptionReg();
-    InitIntConReg();
-    InitOscConReg();
-    InitAnSelReg();
-    InitCmCon0Reg();
-    InitADCon0Reg();
-}
-
 void InitPins() {
     Indicator0Pin = IndicatorOff;
     Indicator1Pin = IndicatorOff;
@@ -843,8 +815,8 @@ void main() {
     TRISC = 0b11111111;
     InitRegisters();
     InitPins();
-    SR74HC595Initialize();
     DS18B20SetResolution(DS18B20Resolution);
+    SR74HC595Initialize();
     InitRTOS();
     RunRTOS();
     AddTask(DrawIndicatorsTask, 0);
